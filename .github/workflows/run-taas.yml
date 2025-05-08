@@ -1,0 +1,23 @@
+# .github/workflows/run-taas.yml
+name: TaaS Docker Swarm Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-taas:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: docker build -t taas-sample .
+
+    - name: Deploy to Swarm
+      run: |
+        docker service update --image taas-sample taas-service || \
+        docker service create --name taas-service --replicas 1 taas-sample
