@@ -1,23 +1,40 @@
-# .github/workflows/run-taas.yml
-name: TaaS Docker Swarm Deployment
+name: deploy-taas
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  deploy-taas:
+  deploy:
+    name: Deploy TaaS App
     runs-on: self-hosted
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    - name: Build Docker Image
-      run: docker build -t taas-sample .
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-    - name: Deploy to Swarm
+    - name: Sleep for 20 seconds
+      run: sleep 20
+
+    - name: Build Docker image
       run: |
-        docker service update --image taas-sample taas-service || \
-        docker service create --name taas-service --replicas 1 taas-sample
+        docker build -t taas-sample:latest .
+
+    - name: Run container
+      run: |
+        docker run -d --rm --name taas-test -p 8080:80 taas-sample:latest
+
+    - name: Wait and test container
+      run: |
+        sleep 5
+        curl -I http://localhost:8080 || true
+
+    - name: Clean up container
+      if: always()
+      run: |
+        docker stop taas-test || true
