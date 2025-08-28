@@ -1,4 +1,4 @@
-name: deploy-taas
+name: deploy
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy TaaS App
+    name: Deploy App
     runs-on: self-hosted
 
     steps:
@@ -23,11 +23,11 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t taas-sample:latest .
+        docker build -t sample:latest .
 
     - name: Run container
       run: |
-        docker run -d --rm --name taas-test -p 8080:80 taas-sample:latest
+        docker run -d --rm --name test -p 8080:80 sample:latest
 
     - name: Wait and test container
       run: |
