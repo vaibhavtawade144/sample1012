@@ -11,3 +11,4 @@ if __name__ == "__main__":
     test_add()
     test_subtract()
     print("All tests passed!")
+    print("Now with auto build on seeing changes on github")
